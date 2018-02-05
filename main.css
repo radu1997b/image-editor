@@ -1,13 +1,14 @@
-#app-body{
+#app{
 
   width: 1000px;
   height: 500px;
   margin: 0 auto;;
   background-color: #b3daff;
   margin-top: 20px;
+  display: flex;
 }
 
-#menu-bar{
+#menu{
 
   background-color: red;
   width: 100px;
@@ -57,6 +58,6 @@
   border-color: green;
   display:inline-block;
   margin-left: 250px;
+  margin-top:20px;
   text-align: center;
-
 }
