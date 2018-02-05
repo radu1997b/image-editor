@@ -1,5 +1,5 @@
 function alegeFile(){
-  $("#photo").append("<input id=\"MyFile\" class=\"middle-align\" type=\"file\" onchange=\"puneFoto()\">");
+  $("#photo").append("<input id=\"MyFile\" type=\"file\" onchange=\"puneFoto()\">");
 };
 
 function puneFoto(){
@@ -16,3 +16,15 @@ function puneFoto(){
 };
 
 $(document).ready(alegeFile);
+
+var unghiRotire = 0;
+
+function rotireImagine(){
+
+  unghiRotire += 90;
+  $("#imagine").css("transform",`rotate(${unghiRotire}deg)`);
+  var width = $("#photo").css("width");
+  $("#photo").css("width",$("#photo").css("height"));
+  $("#photo").css("height",width);
+
+};
