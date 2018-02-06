@@ -28,3 +28,25 @@ function rotireImagine(){
   $("#photo").css("height",width);
 
 };
+
+var added = false;
+
+function addSlider(){
+
+  if(added)
+    return;
+  added = true;
+  $("#contrast").append(`<input class="slider" type="range" min="1" max="100">`);
+  $(`input[type="range"]`).attr("oninput","sliderAction(this.value)");
+};
+
+function removeSlider(){
+
+  added = false;
+  $(`input[type="range"]`).remove();
+};
+
+function sliderAction(){
+  var val = $(`input[type="range"]`)[0].value;
+  $("#photo").css("-webkit-filter",`contrast(${val}%)`);
+}

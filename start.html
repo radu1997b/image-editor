@@ -10,10 +10,18 @@
 <body>
 	<div id = "app">
 			<div  id = "menu">
-				<br><br>
-				<button onclick="rotireImagine()" class = "btn">
-					<img class = "img" src = "icons\rotire.png"/>
-				</button>
+				<ul>
+				<li>
+					<button onclick="rotireImagine()" class = "btn">
+						<img class = "img" src = "icons\rotire.png"/>
+					</button>
+			  </li>
+				<li>
+					<button class="btn" onmouseover="addSlider()" onmouseleave="removeSlider()" id="contrast">
+						<img class = "img" src="icons\contrast.png"/>
+					</button>
+				</li>
+			</ul>
 			</div>
 		<div id = "photo"></div>
 	</div>
