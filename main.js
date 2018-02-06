@@ -31,13 +31,14 @@ function rotireImagine(){
 
 var added = false;
 
-function addSlider(){
+function addSlider(id){
 
   if(added)
     return;
   added = true;
-  $("#contrast").append(`<input class="slider" type="range" min="1" max="100">`);
-  $(`input[type="range"]`).attr("oninput","sliderAction(this.value)");
+  $(`#${id}`).append(`<input class="slider" type="range" min="1" max="100">`);
+  $(`input[type="range"]`).attr("oninput",`sliderAction('${id}')`);
+  $(`input[type="range"]`)[0].defaultValue = 50;
 };
 
 function removeSlider(){
@@ -46,7 +47,7 @@ function removeSlider(){
   $(`input[type="range"]`).remove();
 };
 
-function sliderAction(){
+function sliderAction(action){
   var val = $(`input[type="range"]`)[0].value;
-  $("#photo").css("-webkit-filter",`contrast(${val}%)`);
+  $("#photo").css("-webkit-filter",`${action}(${val}%)`);
 }
