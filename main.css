@@ -6,6 +6,8 @@
   background-color: #b3daff;
   margin-top: 20px;
   display: flex;
+  justify-content: center;
+
 }
 
 #menu{
@@ -14,6 +16,13 @@
   width: 100px;
   height:500px;
   display: inline-block;
+  float:left;
+  margin-right: auto;
+}
+
+#menu ul{
+
+  list-style-type: none;
 }
 
 input[type=range]{
@@ -53,11 +62,6 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   padding: 0 0 0 0;
   height:40px;
   background: url("")
-}
-
-#menu ul{
-
-  list-style-type: none;
 }
 
 .btn{
@@ -102,6 +106,34 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   display: flex;
   align-items: center;
   justify-content: center;;
-  margin-left: 250px;
   margin-top:20px;
+}
+
+#fotomenu{
+
+
+  width:150px;
+  border-style: solid;
+  border-color: yellow;
+  border-width: 5px;
+  float:right;
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
+}
+
+#fotomenu ul{
+
+  list-style-type: none;
+  padding: 0px;
+}
+
+.fotoslide{
+
+  width:100px;
+  height: 100px;
+  border-style: solid;
+  border-color: green;
+  margin-top: 5px;
 }
