@@ -42,7 +42,7 @@ function puneFoto(id){
 function addFotoMenu(image,id){
 
   $("#fotomenu").append(`<div class="fotoslide ${id}" onmouseover="addDeleteButton(${id})" onmouseleave="deleteDelButton(${id})" onclick="punePrincipala(${id})">
-                         <img style="position:absolute;"src="${image.src}" width="100" height="100"/>
+                         <img src="${image.src}" width="100" height="100"/>
                          </div>`);
   applyProp(id);
 };
@@ -101,6 +101,7 @@ function deleteDelButton(id){
 function deleteFoto(id){
 
   delete menuFoto[id];
+  let este = true;
   if(id == onScreenId){
     let gasit = false;
     for(var i in menuFoto)
@@ -110,12 +111,15 @@ function deleteFoto(id){
         break;
       }
     if(!gasit){
+      $("#photo").empty();
       $("#photo").css("border-width","10px");
       alegeFile();
+      este = false;
     }
   }
   drawFotoMenu();
-  punePrincipala(onScreenId);
+  if(este)
+    punePrincipala(onScreenId);
 };
 
 $(document).ready(alegeFile);
@@ -125,6 +129,8 @@ function rotireImagine(){
   if(!isOnScreen)
     return;
   menuFoto[onScreenId].rotate += 90;
+  if(menuFoto[onScreenId].rotate > 270)
+    menuFoto[onScreenId].rotate = 0;
   $(`.${onScreenId}`).css("transform",`rotate(${menuFoto[onScreenId].rotate}deg)`);
 };
 
@@ -155,7 +161,7 @@ function applyProp(id){
   $(`.${id}`).css("-webkit-filter",`invert(${menuFoto[id].invert}%)
                                             brightness(${menuFoto[id].brightness}%)
                                             contrast(${menuFoto[id].contrast}%)`);
-  $(`.${id}`).css('transform',`rotate(${menuFoto[id].rotate}deg)`);
+  $(`.${id}`).css("transform",`rotate(${menuFoto[id].rotate}deg)`);
 };
 
 function sliderAction(action){
@@ -163,4 +169,47 @@ function sliderAction(action){
     return;
   menuFoto[onScreenId][action] = $(`input[type="range"]`)[0].value;
   applyProp(onScreenId);
+};
+
+function drawRotated(image,canvas,ctx,degrees){
+
+  if(degrees == 90 || degrees == 270) {
+      canvas.width = image.height;
+      canvas.height = image.width;
+  } else {
+      canvas.width = image.width;
+      canvas.height = image.height;
+  }
+
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(degrees == 90 || degrees == 270) {
+      ctx.translate(image.height/2,image.width/2);
+  } else {
+      ctx.translate(image.width/2,image.height/2);
+ }
+  ctx.rotate(degrees*Math.PI/180);
+  ctx.filter = `contrast(${menuFoto[onScreenId].contrast}%)
+                brightness(${menuFoto[onScreenId].brightness}%)
+                invert(${menuFoto[onScreenId].invert}%)`;
+  ctx.drawImage(image,-image.width/2,-image.height/2);
+};
+
+function saveImage(){
+
+  if(!isOnScreen)
+    return;
+  let img = document.createElement("img");
+  img.setAttribute("src",menuFoto[onScreenId].img.src);
+  let canvas = document.createElement("canvas");
+  canvas.setAttribute("width",img.width);
+  canvas.setAttribute("height",img.height);
+  let ctx = canvas.getContext('2d');
+  drawRotated(img,canvas,ctx,menuFoto[onScreenId].rotate);
+  window.open(canvas.toDataURL('image/png'));
+  let gh = canvas.toDataURL('png');
+  let a  = document.createElement('a');
+  a.href = gh;
+  a.download = 'image.png';
+  a.click();
+
 };
