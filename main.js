@@ -87,9 +87,23 @@ function addDeleteButton(id){
     return;
   deleteButtonActive = true;
   var elem = $(`.fotoslide.${id}`);
-  elem.append(`<div class="delbutton" onclick="deleteFoto(${id})">
+  elem.append(`<div class="delbutton" onclick="deleteFoto(${id})" width="15" height="15">
               <img src="icons/delete.ico" width="15" height="15"/>
               </div>`);
+  var button = $(".delbutton");
+  switch(menuFoto[id].rotate){
+    case 0:
+      button.css("transform","translate(85px,0px)");
+      break;
+    case 90:
+      button.css("transform","rotate(-90deg)");
+      break;
+    case 180:
+      button.css("transform","rotate(180deg) translate(0px,-82px)");
+      break;
+    case 270:
+      button.css("transform","rotate(90deg) translate(82px,-82px)")
+  }
 };
 
 function deleteDelButton(id){
@@ -100,6 +114,7 @@ function deleteDelButton(id){
 
 function deleteFoto(id){
 
+  deleteDelButton(id);
   delete menuFoto[id];
   let este = true;
   if(id == onScreenId){
@@ -171,7 +186,7 @@ function sliderAction(action){
   applyProp(onScreenId);
 };
 
-function drawRotated(image,canvas,ctx,degrees){
+function puneImagine(image,canvas,ctx,degrees){
 
   if(degrees == 90 || degrees == 270) {
       canvas.width = image.height;
@@ -204,7 +219,7 @@ function saveImage(){
   canvas.setAttribute("width",img.width);
   canvas.setAttribute("height",img.height);
   let ctx = canvas.getContext('2d');
-  drawRotated(img,canvas,ctx,menuFoto[onScreenId].rotate);
+  puneImagine(img,canvas,ctx,menuFoto[onScreenId].rotate);
   window.open(canvas.toDataURL('image/png'));
   let gh = canvas.toDataURL('png');
   let a  = document.createElement('a');
