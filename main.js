@@ -15,29 +15,67 @@ function alegeFile(){
 function puneFoto(id){
 
   isOnScreen = true;
+  var width,height;
   var input = document.getElementById(id);
   var fReader = new FileReader();
   fReader.readAsDataURL(input.files[0]);
   $("#photo").empty();
   onScreenId = ++currentId;
-  $("#photo").append(`<img class="${currentId}" width="300" height=400 />`);
+  $("#photo").append(`<img class="${currentId}" />`);
   $("#photo").css("border-width","0px");
   fReader.onloadend = function(event){
     var img = document.getElementsByClassName(`${currentId}`)[0];
     $("#photo").css("height",img.height);
     $("#photo").css("width",img.width);
     img.src = event.target.result;
+    console.log(1);
     menuFoto.push ({
       img:img,
       id:currentId,
       contrast:100,
       brightness:100,
       invert:0,
-      rotate:0
+      rotate:0,
+      width:0,
+      height:0
     });
     drawFotoMenu();
   }
+  $(`.${currentId}`)[0].onload = function(){
+      menuFoto[onScreenId].width = this.naturalWidth;
+      menuFoto[onScreenId].height = this.naturalHeight;
+      resizePhoto();
+  }
 };
+
+function resizePhoto(){
+
+  var maxWidth = parseInt($('#photo').css("width")) + 2*parseInt($('#photo').css("margin-left")) - 50;
+  var maxHeight = parseInt($("#photo").css("height")) + 2*parseInt($("#photo").css("margin-top"));
+  var actualWidth = menuFoto[onScreenId].width;
+  var actualHeight = menuFoto[onScreenId].height;
+  var sol = 1;
+  console.log(actualWidth,actualHeight);
+  if(actualWidth <= maxWidth && actualHeight <= maxHeight)
+    return;
+  var left=0,right=1;
+  while(left <= right){
+    let mid = (left + right)/2;
+    if(actualWidth*mid <= maxWidth && actualHeight*mid <= maxHeight){
+      sol = mid;
+      left = mid + 0.01;
+    }
+    else {
+      right = mid - 0.01;
+    }
+  }
+  $("#photo").find("img").css("width",`${actualWidth*sol}`);
+  $("#photo").find("img").css("height",`${actualHeight*sol}`);
+}
+
+$(window).resize(() => {
+  resizePhoto();
+});
 
 function addFotoMenu(image,id){
 
@@ -160,7 +198,7 @@ function addSlider(id){
     val = 50;
   else
     val = menuFoto[onScreenId][id];
-  $(`#${id}`).append(`<input class="slider" type="range" min="1" max="100">`);
+  $(`#${id}`).append(`<input class="slider" type="range" min="1" max="100"/>`);
   $(`input[type="range"]`).attr("oninput",`sliderAction('${id}')`);
   $(`input[type="range"]`)[0].defaultValue = val;
 };

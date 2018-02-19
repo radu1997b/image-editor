@@ -1,10 +1,9 @@
 #app{
 
-  width: 1000px;
-  height: 500px;
+  width: 90%;
+  height: -webkit-fill-available;
   margin: 0 auto;;
   background-color: #b3daff;
-  margin-top: 20px;
   display: flex;
   justify-content: center;
 
@@ -14,15 +13,17 @@
 
   background-color: red;
   width: 100px;
-  height:500px;
+  height:-webkit-fill-available;
   display: inline-block;
   float:left;
-  margin-right: auto;
+  margin-right: 50px;
 }
 
 #menu ul{
 
   list-style-type: none;
+  -webkit-padding-start:0px;
+  display: grid;
 }
 
 input[type=range]{
@@ -106,18 +107,18 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   display: flex;
   align-items: center;
   justify-content: center;;
-  margin-top:20px;
+  margin:auto;
+
 }
 
 #fotomenu{
-
 
   width:150px;
   border-style: solid;
   border-color: yellow;
   border-width: 5px;
   float:right;
-  margin-left: auto;
+  margin-left: 50px;
   display: block;
   justify-content: center;
   overflow: auto;
