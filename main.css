@@ -12,7 +12,7 @@
 #menu{
 
   background-color: red;
-  width: 100px;
+  width: 180px;
   height:-webkit-fill-available;
   display: inline-block;
   float:left;
@@ -62,7 +62,6 @@ input[type=range]:focus::-webkit-slider-runnable-track {
   margin: 0 0 0 0;
   padding: 0 0 0 0;
   height:40px;
-  background: url("")
 }
 
 .btn{
@@ -180,4 +179,55 @@ input[type="file"] {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
     background-color: #8080ff;
+}
+
+#slideshow{
+  width:90%;
+  background-color: red;
+  margin:0 auto;
+  padding:20px;
+  display: grid;
+  overflow: auto;
+}
+
+.centered{
+  text-align:center;
+  color:darkblue;
+}
+
+#imglist{
+  display: inline-block;
+}
+
+.boximage{
+  width:200px;
+  height:200px;
+  border-width: 5px;
+  border-color: green;
+  margin:10px;
+}
+
+.element{
+  align-items: center;
+  float:left;
+  margin:20px;
+}
+
+input[type="checkbox"]{
+
+  width:20px;
+  height: 20px;
+  margin-left: 100px;
+}
+
+.submitbtn{
+  width:100px;
+  height:50px;
+  margin:auto;
+  margin-top: 30px;
+}
+
+#numberbox{
+
+  width:100px;
 }

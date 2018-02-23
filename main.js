@@ -5,7 +5,7 @@ var isOnScreen = false;
 
 function alegeFile(){
   $("#photo").append(`<label class="custom-file-upload">
-                      <input id="MyFile" type="file" onchange="puneFoto('MyFile')"/>
+                      <input id="MyFile" type="file" onchange="puneFoto('MyFile')" accept=".png,.jpg,.jpeg"/>
                       <img src='icons/upload.png' width='50' height='50'/>
                       <br>Incarca
                       </label>`);
@@ -28,7 +28,6 @@ function puneFoto(id){
     $("#photo").css("height",img.height);
     $("#photo").css("width",img.width);
     img.src = event.target.result;
-    console.log(1);
     menuFoto.push ({
       img:img,
       id:currentId,
@@ -37,27 +36,41 @@ function puneFoto(id){
       invert:0,
       rotate:0,
       width:0,
-      height:0
+      height:0,
+      scale:100,
+      grayscale:0,
+      extension:'png'
     });
     drawFotoMenu();
   }
   $(`.${currentId}`)[0].onload = function(){
       menuFoto[onScreenId].width = this.naturalWidth;
       menuFoto[onScreenId].height = this.naturalHeight;
-      resizePhoto();
+      let imageName = input.files[0].name.split(".");
+      menuFoto[onScreenId].extension = imageName[imageName.length-1];
+      resizePhoto(onScreenId);
   }
 };
 
-function resizePhoto(){
+function resizePhoto(id){
 
-  var maxWidth = parseInt($('#photo').css("width")) + 2*parseInt($('#photo').css("margin-left")) - 50;
-  var maxHeight = parseInt($("#photo").css("height")) + 2*parseInt($("#photo").css("margin-top"));
-  var actualWidth = menuFoto[onScreenId].width;
-  var actualHeight = menuFoto[onScreenId].height;
-  var sol = 1;
-  console.log(actualWidth,actualHeight);
-  if(actualWidth <= maxWidth && actualHeight <= maxHeight)
+  if(!isOnScreen)
     return;
+  var maxWidth = parseInt($('#photo').css("width")) + 2*parseInt($('#photo').css("margin-left"));
+  var maxHeight = parseInt($("#photo").css("height")) + 2*parseInt($("#photo").css("margin-top"));
+  if(menuFoto[id].rotate == 90 || menuFoto[id].rotate == 270){
+    let aux = maxWidth;
+    maxWidth = maxHeight;
+    maxHeight = aux;
+  }
+  var actualWidth = menuFoto[id].width;
+  var actualHeight = menuFoto[id].height;
+  var sol = 1;
+  if(actualWidth <= maxWidth && actualHeight <= maxHeight){
+    $("#photo").find("img").css("width",`${actualWidth*sol}`);
+    $("#photo").find("img").css("height",`${actualHeight*sol}`);
+    return;
+  }
   var left=0,right=1;
   while(left <= right){
     let mid = (left + right)/2;
@@ -69,12 +82,17 @@ function resizePhoto(){
       right = mid - 0.01;
     }
   }
+  console.log(sol);
   $("#photo").find("img").css("width",`${actualWidth*sol}`);
   $("#photo").find("img").css("height",`${actualHeight*sol}`);
 }
 
 $(window).resize(() => {
-  resizePhoto();
+  if(!isOnScreen)
+    return;
+  let id = $("#photo").find("img").attr("class").split(' ')[0];
+  console.log(id);
+  resizePhoto(id);
 });
 
 function addFotoMenu(image,id){
@@ -93,13 +111,14 @@ function punePrincipala(id){
   $("#photo").empty();
   $("#photo").append(`<img class="${id}" src="${menuFoto[id].img.src}" width="${menuFoto[id].img.width}" height="${menuFoto[id].img.height}"/>`);
   applyProp(onScreenId);
+  resizePhoto(onScreenId);
 }
 
 function addImageBox(){
 
   $("#fotomenu").append(`<div class="fotoslide">
   <label class="custom-file-upload">
-                      <input id="Myfile" type="file" onchange="puneFoto('Myfile')"/>
+                      <input id="Myfile" type="file" onchange="puneFoto('Myfile')" accept=".png,.jpg,.jpeg"/>
                       <img src='icons/upload.png' width='50' height='50'/>
                       <br>Incarca
                       </label>
@@ -166,6 +185,8 @@ function deleteFoto(id){
     if(!gasit){
       $("#photo").empty();
       $("#photo").css("border-width","10px");
+      $("#photo").css("width","300px");
+      $("#photo").css("height","400px");
       alegeFile();
       este = false;
     }
@@ -173,6 +194,7 @@ function deleteFoto(id){
   drawFotoMenu();
   if(este)
     punePrincipala(onScreenId);
+
 };
 
 $(document).ready(alegeFile);
@@ -185,6 +207,7 @@ function rotireImagine(){
   if(menuFoto[onScreenId].rotate > 270)
     menuFoto[onScreenId].rotate = 0;
   $(`.${onScreenId}`).css("transform",`rotate(${menuFoto[onScreenId].rotate}deg)`);
+  resizePhoto(onScreenId);
 };
 
 var added = false;
@@ -193,12 +216,12 @@ function addSlider(id){
   if(added)
     return;
   added = true;
-  var val;
+  let val;
   if(!isOnScreen)
-    val = 50;
+    val = 100;
   else
     val = menuFoto[onScreenId][id];
-  $(`#${id}`).append(`<input class="slider" type="range" min="1" max="100"/>`);
+  $(`#${id}`).append(`<input class="slider" type="range" min="1" max="200"/>`);
   $(`input[type="range"]`).attr("oninput",`sliderAction('${id}')`);
   $(`input[type="range"]`)[0].defaultValue = val;
 };
@@ -213,8 +236,10 @@ function applyProp(id){
 
   $(`.${id}`).css("-webkit-filter",`invert(${menuFoto[id].invert}%)
                                             brightness(${menuFoto[id].brightness}%)
-                                            contrast(${menuFoto[id].contrast}%)`);
-  $(`.${id}`).css("transform",`rotate(${menuFoto[id].rotate}deg)`);
+                                            contrast(${menuFoto[id].contrast}%)
+                                            grayscale(${menuFoto[id].grayscale/2}%)`);
+  $(`.${id}`).css("transform",`rotate(${menuFoto[id].rotate}deg)
+                               scale(${menuFoto[id].scale/100})`);
 };
 
 function sliderAction(action){
@@ -222,7 +247,128 @@ function sliderAction(action){
     return;
   menuFoto[onScreenId][action] = $(`input[type="range"]`)[0].value;
   applyProp(onScreenId);
+  resizePhoto(onScreenId);
 };
+
+function slideshow(){
+
+  $("body").empty();
+  $("body").append(`<div id="slideshow">
+                    <div class="centered"><h1>Alegeti elementel ce vor fi in slideshow</h1></div>
+                    <div id="imglist">
+
+                    </div>
+                    Introduceti numarul de secunde<input id="numberbox" type="number" value="1"/>
+                    <button class="submitbtn" onclick="startSlideShow()">Submit</button>
+                    <div>`);
+  for(var i in menuFoto){
+    if(!menuFoto[i])
+      continue;
+    $("#imglist").append(`<div class="element">
+                            <div class="boximage">
+                            <img src="${menuFoto[i].img.src}" class="img ${menuFoto[i].id}"/>
+                            </div>
+                            <input type="checkbox" id="c${menuFoto[i].id}"/>
+                            </div>`);
+    applyProp(menuFoto[i].id);
+  }
+};
+
+var selectedImg = [];
+var currentFoto = 1;
+
+function startSlideShow(){
+  let checkboxes = $(`input[type="checkbox"]`).toArray();
+  let seconds = $('#numberbox')[0].value;
+  console.log(seconds);
+  for(var i in checkboxes){
+    if(checkboxes[i].checked){
+      selectedImg.push(checkboxes[i].id.slice(1,checkboxes[i].id.length));
+    }
+  }
+  $("body").empty();
+  $("body").append(`<div id="app"><div id="photo"></div></div>`);
+  $("#photo").css("border-width","0px");
+  $("#photo").css("width","0px");
+  $("#photo").css("height","0px");
+  if(selectedImg.length > 0){
+    $("#photo").append(`<img class="${menuFoto[selectedImg[0]].id}" src="${menuFoto[selectedImg[0]].img.src}"/>`)
+    resizePhoto(menuFoto[selectedImg[0]].id);
+    applyProp(menuFoto[selectedImg[0]].id);
+  }
+  slide = setInterval(() => {puneFotoSlide();},seconds*1000);
+
+};
+
+function puneFotoSlide(){
+  if(currentFoto >= selectedImg.length){
+    clearInterval(slide);
+    $("body").empty();
+    $("body").append(`<div id = "app">
+  			<div  id = "menu">
+  				<ul>
+  				<li>
+  					<button onclick="rotireImagine()" class = "btn">
+  						<img class = "img" src = "icons\\rotire.png" alt="rotire"/>
+  					</button>
+  			  </li>
+  				<li>
+  					<button class="btn" onmouseover="addSlider('contrast')" onmouseleave="removeSlider()" id="contrast">
+  						<img class = "img" src="icons\\contrast.png"/>
+  					</button>
+  				</li>
+  				<li>
+  					<button class="btn" onmouseover="addSlider('brightness')" onmouseleave="removeSlider()" id="brightness">
+  						<img class = "img" src="icons\\brightness.png"/>
+  					</button>
+  				</li>
+  				<li>
+  					<button class="btn" onmouseover="addSlider('invert')" onmouseleave="removeSlider()" id="invert">
+  						<img class = "img" src="icons\\invert.png"/>
+  					</button>
+  				</li>
+  				<li>
+  					<button class="btn" onmouseover="addSlider('grayscale')" onmouseleave="removeSlider()" id="grayscale">
+  						<img class = "img" src="icons\\gray-scale.png"/>
+  					</button>
+  				</li>
+  				<li>
+  					<button class="btn" onmouseover="addSlider('scale')" onmouseleave="removeSlider()" id="scale">
+  						<img class="img" src="icons\\scale.png"/>
+  					</button>
+  				</li>
+  				<li>
+  					<button class = "btn" onclick="slideshow()">
+              <img src="icons\slideshow.png"/>
+  					</button>
+  				</li>
+  				<li>
+  					<button class="btn" onclick="saveImage()">
+  						<img class="img" src="icons\\save.png"/>
+  					</button>
+  				</li>
+  			</ul>
+  			</div>
+  		<div id = "photo"></div>
+  		<div id="fotomenu">
+
+  			<ul id="imagelist">
+  			</ul>
+  		</div>
+  	</div>`);
+    $("#photo").css("width","0px");
+    $("#photo").css("height","0px");
+    $("#photo").css("border-width","0px");
+    punePrincipala(onScreenId);
+    drawFotoMenu();
+    return;
+  }
+  $("#photo").empty();
+  $("#photo").append(`<img class="${menuFoto[selectedImg[currentFoto]].id}" src="${menuFoto[selectedImg[currentFoto]].img.src}"/>`);
+  applyProp(menuFoto[selectedImg[currentFoto]].id);
+  resizePhoto(menuFoto[selectedImg[currentFoto]].id);
+  currentFoto ++;
+}
 
 function puneImagine(image,canvas,ctx,degrees){
 
@@ -243,7 +389,8 @@ function puneImagine(image,canvas,ctx,degrees){
   ctx.rotate(degrees*Math.PI/180);
   ctx.filter = `contrast(${menuFoto[onScreenId].contrast}%)
                 brightness(${menuFoto[onScreenId].brightness}%)
-                invert(${menuFoto[onScreenId].invert}%)`;
+                invert(${menuFoto[onScreenId].invert}%)
+                grayscale(${menuFoto[onScreenId].grayscale/2}%)`;
   ctx.drawImage(image,-image.width/2,-image.height/2);
 };
 
@@ -258,11 +405,9 @@ function saveImage(){
   canvas.setAttribute("height",img.height);
   let ctx = canvas.getContext('2d');
   puneImagine(img,canvas,ctx,menuFoto[onScreenId].rotate);
-  window.open(canvas.toDataURL('image/png'));
-  let gh = canvas.toDataURL('png');
+  let gh = canvas.toDataURL(`image/${menuFoto[onScreenId].extension}`);
   let a  = document.createElement('a');
   a.href = gh;
-  a.download = 'image.png';
+  a.download = `image${onScreenId}.${menuFoto[onScreenId].extension}`;
   a.click();
-
 };
