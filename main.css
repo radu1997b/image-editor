@@ -66,8 +66,8 @@ input[type=range]:focus::-webkit-slider-runnable-track {
 
 .btn{
 
-  width:40px;
-  height:40px;
+  width:45px;
+  height:45px;
   display:flex;
   background-color: blue;
   border-width: 0;
@@ -230,4 +230,13 @@ input[type="checkbox"]{
 #numberbox{
 
   width:100px;
+}
+
+#chart{
+
+  display: block;
+  width:90%;
+  height:-webkit-fill-available;
+  background-color: white;
+  margin:0 auto;
 }

@@ -259,7 +259,7 @@ function slideshow(){
 
                     </div>
                     Introduceti numarul de secunde<input id="numberbox" type="number" value="1"/>
-                    <button class="submitbtn" onclick="startSlideShow()">Submit</button>
+                    <button class="submitbtn" onclick="startSlideShow()">Start Slideshow</button>
                     <div>`);
   for(var i in menuFoto){
     if(!menuFoto[i])
@@ -303,64 +303,7 @@ function startSlideShow(){
 function puneFotoSlide(){
   if(currentFoto >= selectedImg.length){
     clearInterval(slide);
-    $("body").empty();
-    $("body").append(`<div id = "app">
-  			<div  id = "menu">
-  				<ul>
-  				<li>
-  					<button onclick="rotireImagine()" class = "btn">
-  						<img class = "img" src = "icons\\rotire.png" alt="rotire"/>
-  					</button>
-  			  </li>
-  				<li>
-  					<button class="btn" onmouseover="addSlider('contrast')" onmouseleave="removeSlider()" id="contrast">
-  						<img class = "img" src="icons\\contrast.png"/>
-  					</button>
-  				</li>
-  				<li>
-  					<button class="btn" onmouseover="addSlider('brightness')" onmouseleave="removeSlider()" id="brightness">
-  						<img class = "img" src="icons\\brightness.png"/>
-  					</button>
-  				</li>
-  				<li>
-  					<button class="btn" onmouseover="addSlider('invert')" onmouseleave="removeSlider()" id="invert">
-  						<img class = "img" src="icons\\invert.png"/>
-  					</button>
-  				</li>
-  				<li>
-  					<button class="btn" onmouseover="addSlider('grayscale')" onmouseleave="removeSlider()" id="grayscale">
-  						<img class = "img" src="icons\\gray-scale.png"/>
-  					</button>
-  				</li>
-  				<li>
-  					<button class="btn" onmouseover="addSlider('scale')" onmouseleave="removeSlider()" id="scale">
-  						<img class="img" src="icons\\scale.png"/>
-  					</button>
-  				</li>
-  				<li>
-  					<button class = "btn" onclick="slideshow()">
-              <img src="icons\slideshow.png"/>
-  					</button>
-  				</li>
-  				<li>
-  					<button class="btn" onclick="saveImage()">
-  						<img class="img" src="icons\\save.png"/>
-  					</button>
-  				</li>
-  			</ul>
-  			</div>
-  		<div id = "photo"></div>
-  		<div id="fotomenu">
-
-  			<ul id="imagelist">
-  			</ul>
-  		</div>
-  	</div>`);
-    $("#photo").css("width","0px");
-    $("#photo").css("height","0px");
-    $("#photo").css("border-width","0px");
-    punePrincipala(onScreenId);
-    drawFotoMenu();
+    goToMainPage();
     return;
   }
   $("#photo").empty();
@@ -368,6 +311,153 @@ function puneFotoSlide(){
   applyProp(menuFoto[selectedImg[currentFoto]].id);
   resizePhoto(menuFoto[selectedImg[currentFoto]].id);
   currentFoto ++;
+}
+
+function goToMainPage()
+{
+
+  $("body").empty();
+  $("body").append(`<div id = "app">
+			<div  id = "menu">
+				<ul>
+				<li>
+					<button onclick="rotireImagine()" class = "btn">
+						<img class = "img" src = "icons\\rotire.png" alt="rotire"/>
+					</button>
+			  </li>
+				<li>
+					<button class="btn" onmouseover="addSlider('contrast')" onmouseleave="removeSlider()" id="contrast">
+						<img class = "img" src="icons\\contrast.png"/>
+					</button>
+				</li>
+				<li>
+					<button class="btn" onmouseover="addSlider('brightness')" onmouseleave="removeSlider()" id="brightness">
+						<img class = "img" src="icons\\brightness.png"/>
+					</button>
+				</li>
+				<li>
+					<button class="btn" onmouseover="addSlider('invert')" onmouseleave="removeSlider()" id="invert">
+						<img class = "img" src="icons\\invert.png"/>
+					</button>
+				</li>
+				<li>
+					<button class="btn" onmouseover="addSlider('grayscale')" onmouseleave="removeSlider()" id="grayscale">
+						<img class = "img" src="icons\\gray-scale.png"/>
+					</button>
+				</li>
+				<li>
+					<button class="btn" onmouseover="addSlider('scale')" onmouseleave="removeSlider()" id="scale">
+						<img class="img" src="icons\\scale.png"/>
+					</button>
+				</li>
+				<li>
+					<button class = "btn" onclick="slideshow()">
+						<img class="img" src="icons\\slideshow.png"/>
+					</button>
+				</li>
+				<li>
+					<button class = "btn" onclick="drawCharts()">
+						<img class="img" src="icons\\diagram.png"/>
+					</button>
+				</li>
+				<li>
+					<button class="btn" onclick="saveImage()">
+						<img class="img" src="icons\\save.png"/>
+					</button>
+				</li>
+			</ul>
+			</div>
+		<div id = "photo"></div>
+		<div id="fotomenu">
+
+			<ul id="imagelist">
+			</ul>
+		</div>
+	</div>`);
+  $("#photo").css("width","0px");
+  $("#photo").css("height","0px");
+  $("#photo").css("border-width","0px");
+  punePrincipala(onScreenId);
+  drawFotoMenu();
+}
+
+function createChart(data,color)
+{
+
+  let  count = [];
+  for(let i = 0 ;i <= 255 ; ++i)
+  count.push(i);
+  var canvas = document.createElement("canvas");
+  canvas.setAttribute("width",400);
+  canvas.setAttribute("height",400);
+  var ctx = canvas.getContext("2d");
+  var myChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+      labels: count,
+      datasets: [{
+          label: '',
+          data: data,
+          backgroundColor:color,
+          borderColor:'rgba(255,99,132,1)'
+      }]
+  },
+  options: {
+      responsive: true,
+      maintainAspectRatio: false,
+  }
+  });
+  return canvas;
+}
+
+function drawCharts(){
+
+    if(!isOnScreen)
+      return;
+    var res = getRGBValues();
+    let R = res[0];
+    let G = res[1];
+    let B = res[2];
+    let canvas = [];
+    canvas.push(createChart(R,'rgba(255,0,0,1)'));
+    canvas.push(createChart(G,'rgba(0,255,0,1)'));
+    canvas.push(createChart(B,'rgba(0,0,255,1)'));
+    $("body").empty();
+    $("body").append(`<div>
+                      <img src="icons\\backbutton.png" onclick="goToMainPage()" width="50px" height="50px"/>
+                      </div>`);
+    $("body").append(`<div id="chart"></div>`);
+
+    $("#chart").append(canvas[0]);
+    $("#chart").append(canvas[1]);
+    $("#chart").append(canvas[2]);
+}
+
+function getRGBValues(){
+
+  let R = new Array(256).fill(0,0,255);
+  let G = new Array(256).fill(0,0,255);
+  let B = new Array(256).fill(0,0,255);
+  let canvas = document.createElement("canvas");
+  canvas.setAttribute("width",menuFoto[onScreenId].width);
+  canvas.setAttribute("height",menuFoto[onScreenId].height);
+  let ctx = canvas.getContext("2d");
+  ctx.filter = `contrast(${menuFoto[onScreenId].contrast}%)
+                brightness(${menuFoto[onScreenId].brightness}%)
+                invert(${menuFoto[onScreenId].invert}%)
+                grayscale(${menuFoto[onScreenId].grayscale/2}%)`;
+  let img = $(`.${onScreenId}`)[0];
+  ctx.drawImage(img,0,0);
+  let canvasColor = ctx.getImageData(0,0,menuFoto[onScreenId].width,menuFoto[onScreenId].height).data;
+  for(var i = 1 ; i <= canvasColor.length ; ++i){
+    if(i % 4 == 1)
+      R[canvasColor[i - 1]] ++;
+    else if(i % 4 == 2)
+      G[canvasColor[i - 1]] ++;
+    else if(i % 4 == 3)
+      B[canvasColor[i - 1]] ++;
+  }
+  return [R,G,B];
 }
 
 function puneImagine(image,canvas,ctx,degrees){
